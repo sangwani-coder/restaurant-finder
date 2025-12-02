@@ -1,0 +1,109 @@
+Restaurant Finder Coding Challenge (November 2025)
+Task Overview
+Build an LLM-Driven Restaurant Finder API that allows users to enter a free‑form message
+describing what they want to do. The system should then:
+Convert the natural language message into a structured JSON command using an LLM
+
+Use the JSON command to call the Foursquare Places API for restaurant data.
+
+Expose an GET API endpoint that can be used in the browser to view JSON results
+of the restaurant data. The user must provide a code
+ parameter pioneerdevai
+
+ to prevent unauthorized access.
+
+Foursquare API:
+Updated Place Search: https://docs.foursquare.com/fsq-developers-places/reference/place-search
+Place details (alternative) : https://docs.foursquare.com/fsq-developers-places/reference/place-details
+
+Example Workflow:
+User Input:
+"Find me a cheap sushi restaurant in downtown Los Angeles that's open now and has at 
+least a 4-star rating."
+
+LLM Conversion:
+The LLM converts the input into a JSON command similar to:
+​
+Downstream API Call:
+Use this JSON to query the Foursquare Places API. 
+The API should return detailed restaurant information including:
+Name
+Address
+Cuisine
+Rating (optional)
+Price Level (optional)
+Operating Hours (optional)
+
+Display Results:
+No UI needed. Just expose an GET endpoint that returns JSON that can be viewed in a browser.
+
+Technical Requirements
+Language & Framework:
+
+API Endpoints:
+Route:  GET /api/execute?message=<your_query>&code=pioneerdevai
+ that uses URL encoding
+
+Example route:
+GET /api/execute?message=Find%20me%20a%20cheap%20sushi%20restaurant%20in%20downtown%20Los%20Angeles%20that's%20open%20now%20and%20has%20at%20least%20a%204-star%20rating&code=pioneerdevai
+
+Note it is using URL encoding for message parameters
+Original message is Find me a cheap sushi restaurant in downtown Los Angeles that's open now and has at least a 4-star rating.
+
+Workflow:
+First validate the code
+ is pioneerdevai
+If not, return a 401
+
+Downstream API Call:
+Use the parsed JSON to extract fields.
+Call the Foursquare Places API using the provided parameters. Ensure you handle 
+authentication using API keys stored as environment variables.
+
+Return Results:
+Parse the response from the Foursquare API and return a well‑structured JSON object 
+containing key restaurant details.
+You should only return the restaurant information that is relevant based on the user’s message.
+
+Display Results
+Since it’s a GET request returning JSON, the result can be viewed in a browser or Postman.
+
+Security & Best Practices:
+Store sensitive data (e.g., API keys for Foursquare and the LLM provider) in environment
+variables.
+Implement error handling for invalid inputs or unexpected API responses.
+
+Environment:
+Provide clear setup instructions in a README to run the application locally.
+
+Deployment
+Deploy the service on the deployment platform of your choice (Fly.io, Vercel, etc). Free tiers should be sufficient.
+
+Evaluation Criteria:
+Functionality:
+Does the app work well for the basic use cases? How about more complicated cases?
+
+Code Quality:
+Is the code clean, modular, well‑documented, and type‑safe?
+
+Implementation:
+Does the backend properly convert natural language into structured JSON, 
+handle API interactions with Foursquare, and manage errors gracefully?
+
+Efficiency:
+Is the application performant and responsive for the task’s scope?
+
+Commit History:
+Are there clear and logical commits demonstrating your development process?
+
+Creativity:
+Are any optional or unique enhancements implemented effectively?
+
+Security:
+Are best practices followed to secure sensitive data (e.g., API keys)?
+
+Include a README with:
+Setup instructions for running the app locally.
+Details on configuring environment variables.
+Any assumptions or limitations in your implementation.
+
