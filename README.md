@@ -14,7 +14,7 @@ describing what they want to do.
 
     npm install
 
-* Set Variables*
+*Set Variables*
 
     copy the .env.example to .env and set your API Keys.
 
