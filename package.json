@@ -1,0 +1,14 @@
+{
+  "name": "restaurantfinder",
+  "version": "1.0.0",
+  "description": " LLM-Driven Restaurant Finder API that allows users to enter a free‑form message describing what they want to do",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "peter zyambo",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
