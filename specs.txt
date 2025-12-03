@@ -23,6 +23,15 @@ least a 4-star rating."
 
 LLM Conversion:
 The LLM converts the input into a JSON command similar to:
+{
+    "action": "restaurant_search".
+    "parameters": {
+        "query": "sushi",
+        "near": "downtown Los Angeles",
+        "price": "1", //optional
+        "open_now": true // optional
+    }
+}
 ​
 Downstream API Call:
 Use this JSON to query the Foursquare Places API. 
