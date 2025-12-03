@@ -39,8 +39,6 @@ set LLM_API_KEY in .env
     
     LLM_API_KEY=<your-gemini-api-key>
 
-4. Test
-Run the `test_gemini.ts` file example that uses the generateContent method to send a request to the Gemini API using the `gemini-3-pro-preview`.
 
 Run:
     
