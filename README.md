@@ -40,20 +40,7 @@ set LLM_API_KEY in .env
     LLM_API_KEY=<your-gemini-api-key>
 
 
-Run:
-    
-    npx ts-node src/test_gemini.ts
-
-    **Example OutPut (Success)**
-
-    ```
-        I ran in front of a car and got tired.
-        Then I ran behind the car.
-        And I got exhausted.
-    ```
-
-
-**Running the Dev server**:
+**Running the development server**:
 
     npm run dev
 
@@ -66,3 +53,7 @@ Run:
     http://localhost:3000/api/execute?message=Find%20me%20a%20cheap%20sushi%20restaurant%20in%20downtown%20Los%20Angeles%20that's%20open%20now%20and%20has%20at%20least%20a%204-star%20rating&code=pioneerdevai
     
     
+### Unit Tests
+Run tests to ensure Jest is configured correctly.
+
+    npm run test
