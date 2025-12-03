@@ -21,8 +21,7 @@ describing what they want to do.
 
     copy the .env.example to .env and set your API Keys.
 
-***Instal GoogleGenAI**
-
+**Install GoogleGenAI**
 
 1. Installation
 
@@ -32,7 +31,7 @@ describing what they want to do.
 
 You need a Gemeni API key from [Google AI](https://aistudio.google.com/app/apikey) studio to use `@google/genai`.
 
-Go to: https://aistudio.google.com/app/apikey and get it FREE.
+    Go to: https://aistudio.google.com/app/apikey and get it FREE.
 
 
 3. Environment Variables
