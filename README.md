@@ -4,19 +4,57 @@ describing what they want to do.
 
 # Running the project Locally
 
+**Prerequistes**
+- node.js version 20 or later
+
 **clone this repo and cd into project root**:
 
     git@github.com:sangwani-coder/restaurant-finder.git
 
-**Setup Environment**:
+## Requirements:
 
 *Install requirements*
 
     npm install
 
-*Set Variables*
+**Set Variables**
 
     copy the .env.example to .env and set your API Keys.
+
+***Instal GoogleGenAI**
+
+
+1. Installation
+
+    npm install @google/genai
+
+2. Obtain API  Key
+
+You need a Gemeni API key from [Google AI](https://aistudio.google.com/app/apikey) studio to use `@google/genai`.
+
+Go to: https://aistudio.google.com/app/apikey and get it FREE.
+
+
+3. Environment Variables
+set LLM_API_KEY in .env
+    
+    LLM_API_KEY=<your-gemini-api-key>
+
+4. Test
+Run the `test_gemini.ts` file example that uses the generateContent method to send a request to the Gemini API using the `gemini-3-pro-preview`.
+
+Run:
+    
+    npx ts-node src/test_gemini.ts
+
+    **Example OutPut (Success)**
+
+    ```
+        I ran in front of a car and got tired.
+        Then I ran behind the car.
+        And I got exhausted.
+    ```
+
 
 **Running the Dev server**:
 
