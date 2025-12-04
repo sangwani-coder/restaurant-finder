@@ -33,6 +33,33 @@ const restaurantFunctionDeclaration = {
   },
 };
 
+/**
+ * Find optimal restaurants for a user
+ * @param string {query} - A string that provides query parameters.
+ */
+export async function findOptimalRestaurants(query: any){
+    const url = `https://places-api.foursquare.com/places/search${query}`;
+    const options = {
+        method: 'GET',
+        headers: {
+            accept: 'application/json', 'X-Places-Api-Version': '2025-06-17',
+            authorization: `Bearer ${config.FSQ_API_KEY}`,
+        },
+    };
+    try {
+        const res = await fetch(url, options);
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const data = await res.json();
+        return data
+
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+}
+
+
 async function queryFSQ(userPrompt:string): Promise<GenerateContentResponse> {
   const contents = [
     {
@@ -59,12 +86,12 @@ async function checkForFunctionCalls() {
 
   // Check for function calls in the response
   if (response.functionCalls && response.functionCalls.length > 0) {
-    const functionCall = response.functionCalls[0]; // Assuming one function call
-
-    console.log(`Function to call: ${functionCall?.name}`);
-    console.log(`Arguments: ${JSON.stringify(functionCall?.args)}`);
-    // In a real app, you would call your actual function here:
-    // const result = await getCurrentTemperature(functionCall.args);
+    const tool_call = response.functionCalls[0]; // Assuming one function call
+    let result;
+    if (tool_call?.name === 'find_optimal_restaurants' && tool_call.args) {
+      result = await findOptimalRestaurants(tool_call.args.query);
+      console.log(`Function execution result: ${JSON.stringify(result)}`);
+    }
   } else {
     console.log("No function call found in the response.");
     console.log(response.text);
