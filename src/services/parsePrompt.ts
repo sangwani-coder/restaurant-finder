@@ -37,7 +37,6 @@ const constraints = `
   `
 
 export async function promptAi(message: string | 'undefined'): Promise<string> {
-
     const prompt = constraints + message;
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
