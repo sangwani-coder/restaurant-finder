@@ -64,7 +64,7 @@ First validate the code
  is pioneerdevai
 If not, return a 401
 
-Downstream API Call:
+Downstream(GoogleGenAi) API Call:
 Use the parsed JSON to extract fields.
 Call the Foursquare Places API using the provided parameters. Ensure you handle 
 authentication using API keys stored as environment variables.
