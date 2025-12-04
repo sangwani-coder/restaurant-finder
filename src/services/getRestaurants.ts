@@ -26,10 +26,15 @@ export async function getRestaurants(query: string | '') {
             authorization: `Bearer ${config.FSQ_API_KEY}`,
         },
     };
-    await fetch(url, options)
-        .then(res => res.json())
-        .then(json => console.log(json))
-        .catch(err => console.error(err));
+    try {
+        const res = await fetch(url, options);
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const data = await res.json();
+        return data
+
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
 }
-const query = '?rating=4&open_now=true';
-getRestaurants(query)

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { promptAi } from '../services/parsePrompt';
+import { getRestaurants } from '../services/getRestaurants';
 import {ParsedQs } from 'qs';
 
 export const checkStatus = (req: Request, res: Response, next: NextFunction) => {
@@ -28,7 +29,10 @@ export const findRestaurants = (req: Request, res: Response, next: NextFunction)
         // Function declarations are not allowed inside blocks in strict mode
         // Display the parsed prompt
         // Implement calling the FSQ api with returned parameters
-        const response = await promptAi(query.message!);
+        // const response = await promptAi(query.message!);
+        const response = await getRestaurants('');
+        console.log('Fuction called');
+        console.log(`response ${response}`);
         res.status(200).json(response);
       }
       fetchRes();
