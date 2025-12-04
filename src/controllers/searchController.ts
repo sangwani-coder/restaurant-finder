@@ -25,14 +25,9 @@ export const findRestaurants = (req: Request, res: Response, next: NextFunction)
 
     if (query.code == "pioneerdevai") {
       const fetchRes = async function() {
-        // Use a function expression to prevent Errors:
-        // Function declarations are not allowed inside blocks in strict mode
-        // Display the parsed prompt
-        // Implement calling the FSQ api with returned parameters
-        // const response = await promptAi(query.message!);
-        const response = await getRestaurants('');
-        console.log('Fuction called');
-        console.log(`response ${response}`);
+        // constAiRes = await promptAi(query.message!);
+        // const FsqRes = await getRestaurants('');
+        const response = {"Status": "OK"}
         res.status(200).json(response);
       }
       fetchRes();
