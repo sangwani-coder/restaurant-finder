@@ -2,6 +2,9 @@ import { GenerateImagesResponse, GoogleGenAI, Type } from "@google/genai";
 import dotenv from 'dotenv';
 import { initializeConfig } from '../config/config';
 import { GenerateContentResponse } from "@google/genai";
+// Implement function in utils
+import { toQueryString } from "./utils";
+
 dotenv.config();
 
 // Configure the client
@@ -33,12 +36,15 @@ const restaurantFunctionDeclaration = {
   },
 };
 
+
 /**
  * Find optimal restaurants for a user
  * @param string {query} - A string that provides query parameters.
  */
 export async function findOptimalRestaurants(query: any){
-    const url = `https://places-api.foursquare.com/places/search${query}`;
+  // Implement function in Utils to encode query params
+  const parsed_query = toQueryString(query);
+    const url = `https://places-api.foursquare.com/places/search${parsed_query}`;
     const options = {
         method: 'GET',
         headers: {
@@ -89,7 +95,7 @@ async function checkForFunctionCalls() {
     const tool_call = response.functionCalls[0]; // Assuming one function call
     let result;
     if (tool_call?.name === 'find_optimal_restaurants' && tool_call.args) {
-      result = await findOptimalRestaurants(tool_call.args.query);
+      result = await findOptimalRestaurants(tool_call.args);
       console.log(`Function execution result: ${JSON.stringify(result)}`);
     }
   } else {
