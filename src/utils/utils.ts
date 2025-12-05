@@ -7,9 +7,8 @@
  * @returns  A fully encoded query string (e.g., "?location=Lusaka")
  */
 export function toQueryString(params: Record<string, string | number | boolean | undefined | null>): string {
-    // convert params to JS Object
-    // use filter to null/undefined/empty string values 
-    // Use map to to transform params values to string
+    // convert params to JS Object use to handle null/undefined/empty string values 
+    // ans ensure all values are strings respectively.
     const paramsObj = Object.entries(params)
         .filter(([key, value]) => value !== undefined && value !== null && String(value) !== '')
         .map(([key, value]) => [key, String(value)]);
