@@ -1,56 +1,118 @@
+- [restaurant-finder](#restaurant-finder)
+  - [Running the project Locally](#running-the-project-locally)
+    - [Setup Environment:](#setup-environment)
+    - [Get your API keys Keys](#get-your-api-keys-keys)
+    - [Running the development server\*\*:](#running-the-development-server)
+  - [Endpoints](#endpoints)
+    - [Overview](#overview)
+      - [Query Parameters](#query-parameters)
+      - [Example Usage](#example-usage)
+    - [Test in Postman](#test-in-postman)
+      - [Response Format](#response-format)
+      - [Response Status Codes](#response-status-codes)
+    - [Unit Tests](#unit-tests)
+
 # restaurant-finder
 LLM-Driven Restaurant Finder API that allows users to enter a free‑form message
-describing what they want to do.
+describing what they want to do. The API processes natural language queries and returns relevant restaurant information from the Foursquare Places API.
 
-# Running the project Locally
+## Running the project Locally
 
 **Prerequistes**
 - node.js version 20 or later
 
-**clone this repo and cd into project root**:
+1. clone this repo and cd into project root**:
 
     git@github.com:sangwani-coder/restaurant-finder.git
 
-## Requirements:
+### Setup Environment:
 
-*Install requirements*
+1. Install requirements
+Ensure you are in the root directory where package.json is and run:
 
     npm install
 
-**Set Variables**
+2. Set Environment Variables
 
     copy the .env.example to .env and set your API Keys.
 
-**Install GoogleGenAI**
 
-1. Installation
+### Get your API keys Keys
+After generating the API keys ffrom the listed sites below, set your api keys in .env.
 
-    npm install @google/genai
+1. Google Gen AI
 
-2. Obtain API  Key
+    https://aistudio.google.com/app/apikey
 
-You need a Gemeni API key from [Google AI](https://aistudio.google.com/app/apikey) studio to use `@google/genai`.
+2. Four Square
 
-    Go to: https://aistudio.google.com/app/apikey and get it FREE.
-
-
-3. Environment Variables
-set GEMINI_API_KEY in .env
-    
-    GEMINI_API_KEY=<your-gemini-api-key>
+    https://foursquare.com/
 
 
-**Running the development server**:
+### Running the development server**:
 
     npm run dev
 
-**Test in Browser**:
-*Check server status*:
-    http:localhost:3000
+## Endpoints
 
-*Search for restaurant**
+    `{BaseUrl}/api/execute?message={user_message}&code=pioneerdevai`
 
-    http://localhost:3000/api/execute?message=Find%20me%20a%20cheap%20sushi%20restaurant%20in%20downtown%20Los%20Angeles%20that's%20open%20now%20and%20has%20at%20least%20a%204-star%20rating&code=pioneerdevai
+### Overview
+This endpoint allows you to search for restaurants based on location and search criteria. The API processes natural language queries and returns relevant restaurant information from the Foursquare Places API.
+
+#### Query Parameters
+
+| Parameter | Type   | Required | Description                                                                           |
+| --------- | ------ | -------- | ------------------------------------------------------------------------------------- |
+| message   | string | Yes      | The search query in natural language format. Example: "Find me restaurants in Zambia" |
+| code      | string | Yes      | The API access code for authentication. Example: "pioneerdevai"                       |
+
+
+#### Example Usage
+
+    GET http://localhost:3000/api/execute?message=Find me restaurants in zambia lusaka&code=pioneerdevai
+
+
+### Test in Postman
+
+    https://lipilatech.postman.co/workspace/My-Workspace~1fa1f36f-7ea8-4a6a-81de-23683e9e2690/collection/19566920-7c3427ae-c0f8-4197-a68c-202d39f89d2c?action=share&creator=19566920&active-environment=19566920-109a6a13-c696-4a4e-8efd-633e24cfceaa&live=f5j3x41y6w
+
+
+#### Response Format
+**Success Response (200 OK)**
+The API returns a JSON object containing the action type and an array of restaurant results.
+
+*Response Structure:*
+
+    ```{
+        "action": "restaurant_search",
+        "results": [
+            {
+            "name": "Restaurant Name",
+            "address": "Full Address",
+            "detail_url": "https://places-api.foursquare.com/places/...",
+            "Cuisine": "Cuisine Type"
+            }
+        ]
+        }
+    ```
+
+**Field Descriptions:**
+- action: The type of search performed (e.g., "restaurant_search")
+- results: Array of restaurant objects matching the search criteria
+- name: Name of the restaurant
+- address: Physical address of the restaurant (may be null if unavailable)
+- detail_url: URL to get detailed information about the restaurant from Foursquare
+- Cuisine: Type of cuisine or restaurant category
+
+
+#### Response Status Codes
+| Status Code | Description |
+|---|---|
+| 200 | Success - Restaurant results returned |
+| 400 | Bad Request - Invalid parameters |
+| 401 | Unauthorized - Invalid access code |
+| 500 | Server Error - Internal processing error |
     
     
 ### Unit Tests
