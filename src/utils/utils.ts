@@ -19,7 +19,6 @@ export function parseGenAIResponse(jsonString: string): RestaurantResponse | nul
   try {
     // Check if the string is valid before parsing
     if (!jsonString || jsonString.trim() === '') {
-      console.error("Input string is empty or null.");
       return null;
     }
     // Attempt to parse the string into a JavaScript object
@@ -27,17 +26,15 @@ export function parseGenAIResponse(jsonString: string): RestaurantResponse | nul
 
     // Basic runtime check to confirm the structure
     if (
-      typeof jsonObject === 'object' && 
-      jsonObject !== null && 
+      typeof jsonObject === 'object' &&
+      jsonObject !== null &&
       Array.isArray(jsonObject.results)
     ) {
       return jsonObject;
     } else {
-      console.error("Parsed object does not match the expected structure.");
       return null;
     }
   } catch (error) {
-    console.error("Failed to parse response as JSON:", error);
     return null;
   }
 }
@@ -52,19 +49,19 @@ export function parseGenAIResponse(jsonString: string): RestaurantResponse | nul
  * @returns  A fully encoded query string (e.g., "?location=Lusaka")
  */
 export function toQueryString(params: Record<string, string | number | boolean | undefined | null>): string {
-    // convert params to JS Object use to handle null/undefined/empty string values 
-    // ans ensure all values are strings respectively.
-    const paramsObj = Object.entries(params)
-        .filter(([key, value]) => value !== undefined && value !== null && String(value) !== '')
-        .map(([key, value]) => [key, String(value)]);
-    // Construct new obj
-    const searchParams = new URLSearchParams(paramsObj);
-    // Get the string suitable for use in a URL.
-    const queryString = searchParams.toString();
+  // convert params to JS Object use to handle null/undefined/empty string values 
+  // ans ensure all values are strings respectively.
+  const paramsObj = Object.entries(params)
+    .filter(([key, value]) => value !== undefined && value !== null && String(value) !== '')
+    .map(([key, value]) => [key, String(value)]);
+  // Construct new obj
+  const searchParams = new URLSearchParams(paramsObj);
+  // Get the string suitable for use in a URL.
+  const queryString = searchParams.toString();
 
-    // Prepend ? if the string is not empty.
-    if (queryString.length > 0) {
-        return `?${queryString}`;
-    }
-    return queryString
+  // Prepend ? if the string is not empty.
+  if (queryString.length > 0) {
+    return `?${queryString}`;
+  }
+  return queryString
 }
