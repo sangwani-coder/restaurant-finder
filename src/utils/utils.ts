@@ -24,24 +24,3 @@ export function toQueryString(params: Record<string, string | number | boolean |
     }
     return queryString
 }
-
-// Test Usage
-// 1. single paramter
-const params1 = { location: "Lusaka" };
-console.log(toQueryString(params1)); 
-
-// // 2. Multiple parameters
-const params2 = {name:"Lusaka Restaurant", location: "Lusaka", rating: 5, open_now: true };
-console.log(toQueryString(params2));
-
-// 3. Zero parameters
-const params3 = {};
-console.log(toQueryString(params3));
-
-// 4. Handles undefined/null/encoding
-const params4 = {
-    q: "coffee & tea",
-    limit: undefined,
-    offset: null
-};
-console.log(toQueryString(params4));
