@@ -19,6 +19,7 @@ describing what they want to do. The API processes natural language queries and 
 
 ## Project Structure
 
+```
 |--- README.md
 |--- src/
 | |--- config/
@@ -41,7 +42,7 @@ describing what they want to do. The API processes natural language queries and 
 |--- package.json
 |--- tsconfig.json
 |--- .gitignore
-
+```
 ## Running the project Locally
 
 **Prerequistes**
