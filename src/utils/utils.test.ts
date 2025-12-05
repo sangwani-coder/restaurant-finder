@@ -1,19 +1,6 @@
+import { describe, test, expect } from "@jest/globals";
+
 import { toQueryString, parseGenAIResponse } from "./utils";
-import { jest, beforeEach, describe, test, expect } from "@jest/globals";
-
-
-const isJSON = (str: string) => {
-    try {
-        const json = JSON.parse(str);
-        if (Object.prototype.toString.call(json).slice(8, -1) !== 'Object') {
-            return false
-        }
-    } catch (e) {
-        return false
-    }
-    return true
-}
-
 
 describe('Parse a string response into a typed JSON object', () => {
     test('Should return valid JSON object', () => {

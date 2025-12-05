@@ -10,7 +10,7 @@
     "module": "NodeNext",
     "types": ["node", "jest"],
     // For nodejs:
-    // "lib": ["esnext"],
+    // "lib": ["es2020", "dom"],
     // "types": ["node"],
     // and npm install -D @types/node
 

@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Configure the client
-const config = initializeConfig()
+const config = initializeConfig();
 const ai = new GoogleGenAI({ apiKey: config.GEMINI_API_KEY });
 
 /**

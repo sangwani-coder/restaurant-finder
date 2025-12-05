@@ -39,6 +39,13 @@ export function parseGenAIResponse(jsonString: string): RestaurantResponse | nul
   }
 }
 
+// Define a flexible type for the expected query parameters
+// Record<string, any> allows any string keys with any value type (e.g., string, number)
+interface QueryParams extends Record<string, any> {
+  location?: string;
+  cuisine?: string; 
+  limit?: number; 
+}
 
 /**
  * Converts a parameter object into a URL query string and prepends a '?'.
@@ -48,7 +55,7 @@ export function parseGenAIResponse(jsonString: string): RestaurantResponse | nul
  * @param params The object containing the query parameters (e.g., {location: "Lusaka"})
  * @returns  A fully encoded query string (e.g., "?location=Lusaka")
  */
-export function toQueryString(params: Record<string, string | number | boolean | undefined | null>): string {
+export function toQueryString(params: QueryParams): string {
   // convert params to JS Object use to handle null/undefined/empty string values 
   // ans ensure all values are strings respectively.
   const paramsObj = Object.entries(params)
