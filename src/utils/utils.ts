@@ -1,6 +1,51 @@
+interface Restaurant {
+  name: string;
+  address: string;
+  detail_url: string;
+  Cuisine: string;
+}
+
+interface RestaurantResponse {
+  action: string;
+  results: Restaurant[];
+}
+
 /**
- * Converts a parameter object into a URL query string and
- * prepends a '?'.
+ * Attempts to parse a string response into a typed JSON object.
+ * @param jsonString The raw string output from the Google Gen AI model.
+ * @returns The parsed JSON object, or null if parsing fails.
+ */
+export function parseGenAIResponse(jsonString: string): RestaurantResponse | null {
+  try {
+    // Check if the string is valid before parsing
+    if (!jsonString || jsonString.trim() === '') {
+      console.error("Input string is empty or null.");
+      return null;
+    }
+    // Attempt to parse the string into a JavaScript object
+    const jsonObject: RestaurantResponse = JSON.parse(jsonString);
+
+    // Basic runtime check to confirm the structure
+    if (
+      typeof jsonObject === 'object' && 
+      jsonObject !== null && 
+      Array.isArray(jsonObject.results)
+    ) {
+      return jsonObject;
+    } else {
+      console.error("Parsed object does not match the expected structure.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Failed to parse response as JSON:", error);
+    return null;
+  }
+}
+
+
+/**
+ * Converts a parameter object into a URL query string and prepends a '?'.
+ * 
  * @URLSearchParams
  * Guide: https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
  * @param params The object containing the query parameters (e.g., {location: "Lusaka"})

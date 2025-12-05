@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { runUserPrompt } from '../services/runUserPrompt';
+import { parseGenAIResponse } from "../utils/utils";
 import { ParsedQs } from 'qs';
 
 export const checkStatus = (req: Request, res: Response, next: NextFunction) => {
@@ -27,9 +28,14 @@ export const findRestaurants = (req: Request, res: Response, next: NextFunction)
         const decodedParam = decodeURIComponent(message);
         const fetchRes = async function () {
           const searchResults = await runUserPrompt(decodedParam);
-          console.log('Result', searchResults);
-          res.status(200).json(searchResults);
-        } 
+          const jsonResults = parseGenAIResponse(searchResults);
+          if (jsonResults != null) {
+            res.status(200).json(jsonResults);
+          }else {
+            const emptyJson = ` { "action": "restaurant_search", "results": [] }`
+            res.status(200).json(JSON.parse(emptyJson));
+          }
+        }
         fetchRes();
       }
 

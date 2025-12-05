@@ -65,7 +65,7 @@ const restaurantFunctionDeclaration = {
         type: Type.STRING,
         description: 'The restaurants rating, e.g. 4',
       },
-      chain: {
+      chains: {
         type: Type.STRING,
         description: '',
       },
@@ -86,6 +86,13 @@ const restaurantFunctionDeclaration = {
   },
 };
 
+
+/**
+ * Parses user prompt into valid JSON, queries FSQ API with the result and filters response for the
+ * user.
+ * @param (string) userPrompt - A string from message query paramter
+ * @returns The filtered JSON object from Google Gen AI
+ */
 export async function runUserPrompt(userPrompt: string): Promise<string | any> {
   const systemPrompt = constraints + userPrompt;
   const contents = [
@@ -113,21 +120,23 @@ export async function runUserPrompt(userPrompt: string): Promise<string | any> {
     if (tool_call?.name === 'find_optimal_restaurants' && tool_call.args) {
       functionResponse = await findOptimalRestaurants(tool_call.args);
     }
-    const NewConstraint = `Use the function response from Foursquare Places API. 
+    const NewConstraint = `Your task is to Use the function response from Foursquare Places API. 
                     and return new JSON objects with detailed restaurant information.
-                    Required fields are name, address, detail_url. Include these other fields(optional)
-                    if available e.g( Cuisine, Rating, Price Level Operating Hours
                     
-                    This is the Detail url is:
-                    https://places-api.foursquare.com/places/{fsq_place_id}
+                    **DO NOT include any explanation or markdown formatting (e.g., \`\`\`json).**
+                    Return only the raw JSON object.
+                    
+                    **Required fields are name, address, detail_url. Include these other fields(optional)
+                    if available e.g( Cuisine, Rating, Price Level Operating Hours**
 
-                    If user requests for a place or location not in the response, return json:
-                    {
-                      "action": "restaurant_search".
-                      "results": {
-                      }
-                  }
-                  If result is undefined return empty json.
+                    Here is the data structure you must follow:
+                    { "action": "restaurant_search", "results": [...] }
+                    
+                    Use this endpoint for each restaurants detail_url:
+                    https://places-api.foursquare.com/places/{fsq_place_id}
+                  If result is undefined or you fail to find the optmial restaurant return:
+                  { "action": "restaurant_search", "results": [] }
+                  .
                     `
     // Send back function result to model for final result
     if (response && 'candidates' in response) {
@@ -137,7 +146,6 @@ export async function runUserPrompt(userPrompt: string): Promise<string | any> {
           role: 'user',
           parts: [{ text: finalPrompt }]
         },
-        // { role: "model", parts: [response.candidates[0]?.content] },
         {
           role: 'model',
           parts: [{ text: JSON.stringify(functionResponse) }],
@@ -155,10 +163,3 @@ export async function runUserPrompt(userPrompt: string): Promise<string | any> {
     return response.text;
   }
 }
-
-/**
-const userPrompt = `
-Find me a cheap sushi restaurant in downtown Los Angeles that's open now and has at least a 4-star rating.
-`
-console.log(runUserPrompt(userPrompt));
-*/
