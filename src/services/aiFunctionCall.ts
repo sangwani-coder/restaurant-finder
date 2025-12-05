@@ -3,6 +3,7 @@ import { initializeConfig } from '../config/config';
 import { GenerateContentResponse } from "@google/genai";
 import { toQueryString } from "../utils/utils";
 import dotenv from 'dotenv';
+import { describe } from "node:test";
 
 dotenv.config();
 
@@ -41,24 +42,15 @@ export async function findOptimalRestaurants(query: any) {
 const constraints = `
     Convert prompt into structured JSON command, Valid parameter fields are location, name,
     taste label, chain name, tip, telephone number.
-    Output similar to: 
-        {
-        "action": "restaurant_search".
-        "parameters": {
-            "query": "sushi",
-            "near": "downtown Los Angeles",
-            "price": "1", //optional
-            "open_now": true, // optional
-            // ...other valid fields
-        }
-      }
+
+    If the filter/parameter is not available proceed with available filters.
   `
 
 // Function calling reference: https://ai.google.dev/gemini-api/docs/function-calling?example=weather#javascript
 // Define the function declaration for the model
 const restaurantFunctionDeclaration = {
   name: 'find_optimal_restaurants',
-  description: 'Finds restaurants that suits the users description.',
+  description: 'Query the Foursquare Places API to find optimal places that match query paramaters',
   parameters: {
     type: Type.OBJECT,
     properties: {
@@ -74,6 +66,22 @@ const restaurantFunctionDeclaration = {
         type: Type.STRING,
         description: 'The restaurants rating, e.g. 4',
       },
+      chain: {
+        type: Type.STRING,
+        description: '',
+      },
+      tip: {
+        type: Type.STRING,
+        description: '',
+      },
+      telephone: {
+        type: Type.STRING,
+        description: 'The restaurants telephone number, e.g. 4',
+      },
+      open_now: {
+        type: Type.BOOLEAN,
+        description: 'Checks if a restaturant is open',
+      }
     },
     // required: ['location'],
   },
@@ -84,21 +92,20 @@ async function runUserRequest(userPrompt: string): Promise<void> {
   const contents = [
     {
       role: 'user',
-      parts: [{ text: userPrompt }]
+      parts: [{ text: systemPrompt }]
     }
   ];
+  const config = {
+    tools: [{
+      functionDeclarations: [restaurantFunctionDeclaration]
+    }],
+  }
   // Send request with function declrations
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: 'gemini-2.5-flash',
     contents: contents,
-    config: {
-      tools: [{
-        functionDeclarations: [restaurantFunctionDeclaration]
-      }],
-    },
+    config: config,
   });
-
-  console.log(`First Response ${response.text}`);
 
   // Check for function calls in the response
   if (response.functionCalls && response.functionCalls.length > 0) {
@@ -106,22 +113,24 @@ async function runUserRequest(userPrompt: string): Promise<void> {
     let functionResponse;
     if (tool_call?.name === 'find_optimal_restaurants' && tool_call.args) {
       functionResponse = await findOptimalRestaurants(tool_call.args);
-      console.log(`Function execution result: ${JSON.stringify(functionResponse)}`);
     }
     const NewConstraint = `Use the function response from Foursquare Places API. 
-                    and return new JSON objects with detailed restaurant information including:
-                    Name
-                    Address
-                    Cuisine
-                    Rating (optional)
-                    Price Level (optional)
-                    Operating Hours (optional)
-                    detail_url
-                    The Detail url is:https://places-api.foursquare.com/places/{fsq_place_id}
+                    and return new JSON objects with detailed restaurant information.
+                    Required fields are name, address, detail_url. Include these other fields(optional)
+                    if available e.g( Cuisine, Rating, Price Level Operating Hours
+                    
+                    This is the Detail url is:
+                    https://places-api.foursquare.com/places/{fsq_place_id}
+
+                    If user requests a place in a location not response, return json:
+                    {
+                      "action": "restaurant_search".
+                      "results": {
+                      }
+                  }
                     `
     // Send back function result to model for final result
     if (response && 'candidates' in response) {
-      console.log('Candidates:', response.candidates[0]);
       const finalPrompt = NewConstraint + userPrompt;
       const newContents = [
         {
@@ -134,7 +143,6 @@ async function runUserRequest(userPrompt: string): Promise<void> {
           parts: [{ text: JSON.stringify(functionResponse) }],
         },
       ];
-      console.log('New Prompt', newContents);
       // Get the final response from the model
       const final_response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
@@ -153,6 +161,6 @@ async function runUserRequest(userPrompt: string): Promise<void> {
 
 // Dev Tests
 const userPrompt = `
-Find me a cheap sushi restaurant in downtown Los Angeles that's open now and has at 
+Find me a restaurants in downtown Zambia that's open now and has at 
 least a 4-star rating.`
 runUserRequest(userPrompt);
