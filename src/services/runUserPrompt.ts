@@ -2,9 +2,8 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { initializeConfig } from '../config/config';
 import { GenerateContentResponse } from "@google/genai";
 import { toQueryString } from "../utils/utils";
-import dotenv from 'dotenv';
-import { describe } from "node:test";
 
+import dotenv from 'dotenv';
 dotenv.config();
 
 // Configure the client
@@ -122,12 +121,13 @@ export async function runUserPrompt(userPrompt: string): Promise<string | any> {
                     This is the Detail url is:
                     https://places-api.foursquare.com/places/{fsq_place_id}
 
-                    If user requests a place in a location not response, return json:
+                    If user requests for a place or location not in the response, return json:
                     {
                       "action": "restaurant_search".
                       "results": {
                       }
                   }
+                  If result is undefined return empty json.
                     `
     // Send back function result to model for final result
     if (response && 'candidates' in response) {
@@ -148,10 +148,17 @@ export async function runUserPrompt(userPrompt: string): Promise<string | any> {
         model: 'gemini-2.5-flash',
         contents: newContents,
       });
-      return final_response.text?.trim();
+      return final_response.text;
     }
 
   } else {
-    return response.text?.trim();
+    return response.text;
   }
 }
+
+/**
+const userPrompt = `
+Find me a cheap sushi restaurant in downtown Los Angeles that's open now and has at least a 4-star rating.
+`
+console.log(runUserPrompt(userPrompt));
+*/
