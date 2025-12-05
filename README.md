@@ -1,4 +1,5 @@
 - [restaurant-finder](#restaurant-finder)
+  - [Project Structure](#project-structure)
   - [Running the project Locally](#running-the-project-locally)
     - [Setup Environment:](#setup-environment)
     - [Get your API keys Keys](#get-your-api-keys-keys)
@@ -15,6 +16,31 @@
 # restaurant-finder
 LLM-Driven Restaurant Finder API that allows users to enter a free‑form message
 describing what they want to do. The API processes natural language queries and returns relevant restaurant information from the Foursquare Places API.
+
+## Project Structure
+
+|--- README.md
+|--- src/
+| |--- config/
+| | |--- config.ts
+| |--- controllers/
+| | |--- searchController.ts
+| |--- middlewares/
+| |--- models
+| |--- routes/
+| | |--- searchRoutes.ts
+| |--- services/
+| | |--- PromptAi.ts
+| | |--- runUserPrompt.ts
+| |--- utils/
+| | |--- utils.ts
+| |--- app.ts
+| |--- server.ts
+|--- jest.config.js
+|--- package-lock.json
+|--- package.json
+|--- tsconfig.json
+|--- .gitignore
 
 ## Running the project Locally
 
