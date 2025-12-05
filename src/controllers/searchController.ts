@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { promptAi } from '../services/parsePrompt';
-import { getRestaurants } from '../services/getRestaurants';
+import { runUserPrompt } from '../services/runUserPrompt';
 import {ParsedQs } from 'qs';
 
 export const checkStatus = (req: Request, res: Response, next: NextFunction) => {

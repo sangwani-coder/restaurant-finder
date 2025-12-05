@@ -87,7 +87,7 @@ const restaurantFunctionDeclaration = {
   },
 };
 
-async function runUserRequest(userPrompt: string): Promise<void> {
+export async function runUserPrompt(userPrompt: string): Promise<string | any> {
   const systemPrompt = constraints + userPrompt;
   const contents = [
     {
@@ -148,19 +148,10 @@ async function runUserRequest(userPrompt: string): Promise<void> {
         model: 'gemini-2.5-flash',
         contents: newContents,
       });
-      console.log('Finall response');
-      console.log(final_response.text?.trim());
+      return final_response.text?.trim();
     }
 
   } else {
-    console.log("No function call found in the response.");
-    console.log(response.text);
+    return response.text?.trim();
   }
 }
-
-
-// Dev Tests
-const userPrompt = `
-Find me a restaurants in downtown Zambia that's open now and has at 
-least a 4-star rating.`
-runUserRequest(userPrompt);
