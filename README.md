@@ -35,9 +35,9 @@ You need a Gemeni API key from [Google AI](https://aistudio.google.com/app/apike
 
 
 3. Environment Variables
-set LLM_API_KEY in .env
+set GEMINI_API_KEY in .env
     
-    LLM_API_KEY=<your-gemini-api-key>
+    GEMINI_API_KEY=<your-gemini-api-key>
 
 
 **Running the development server**:

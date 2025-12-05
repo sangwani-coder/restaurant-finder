@@ -5,7 +5,7 @@ dotenv.config();
 
 
 const config = initializeConfig()
-const ai = new GoogleGenAI({ apiKey: config.LLM_API_KEY });
+const ai = new GoogleGenAI({ apiKey: config.GEMINI_API_KEY });
 
 // Code Examples for text generation and structuring response as JSON:
 // https://ai.google.dev/gemini-api/docs/text-generation
@@ -47,3 +47,9 @@ export async function promptAi(message: string | 'undefined'): Promise<string> {
     });
     return response.text!;
 }
+
+const userPrompt = `
+Find me a cheap sushi restaurant in downtown Los Angeles that's open now and has at 
+least a 4-star rating.`
+
+console.log(promptAi(userPrompt));
