@@ -31,9 +31,9 @@ describing what they want to do. The API processes natural language queries and 
 | |--- routes/
 | | |--- searchRoutes.ts
 | |--- services/
-| | |--- PromptAi.ts
 | | |--- runUserPrompt.ts
 | |--- utils/
+| | |--- utils.test.ts
 | | |--- utils.ts
 | |--- app.ts
 | |--- server.ts
