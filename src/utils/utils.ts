@@ -1,20 +1,28 @@
 /**
- * Converts a parameter object into a URL query string, 
- * optionally prepending a '?' using @UrlSearchParams
+ * Converts a parameter object into a URL query string and
+ * prepends a '?'.
+ * @URLSearchParams
  * Guide: https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
  * @param params The object containing the query parameters (e.g., {location: "Lusaka"})
- * 
  * @returns  A fully encoded query string (e.g., "?location=Lusaka")
  */
-export function toQueryString(params: Record<string, string | number | boolean>): string {
+export function toQueryString(params: Record<string, string | number | boolean | undefined | null>): string {
     // convert params to JS Object
+    // use filter to null/undefined/empty string values 
     // Use map to to transform params values to string
     const paramsObj = Object.entries(params)
+        .filter(([key, value]) => value !== undefined && value !== null && String(value) !== '')
         .map(([key, value]) => [key, String(value)]);
+    // Construct new obj
     const searchParams = new URLSearchParams(paramsObj);
+    // Get the string suitable for use in a URL.
     const queryString = searchParams.toString();
-    return `?${queryString}`;
 
+    // Prepend ? if the string is not empty.
+    if (queryString.length > 0) {
+        return `?${queryString}`;
+    }
+    return queryString
 }
 
 // Test Usage
@@ -22,6 +30,18 @@ export function toQueryString(params: Record<string, string | number | boolean>)
 const params1 = { location: "Lusaka" };
 console.log(toQueryString(params1)); 
 
-// 2. Multiple parameters
+// // 2. Multiple parameters
 const params2 = {name:"Lusaka Restaurant", location: "Lusaka", rating: 5, open_now: true };
-console.log(toQueryString(params2)); 
+console.log(toQueryString(params2));
+
+// 3. Zero parameters
+const params3 = {};
+console.log(toQueryString(params3));
+
+// 4. Handles undefined/null/encoding
+const params4 = {
+    q: "coffee & tea",
+    limit: undefined,
+    offset: null
+};
+console.log(toQueryString(params4));

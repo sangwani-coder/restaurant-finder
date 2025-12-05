@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import { initializeConfig } from '../config/config';
 import { GenerateContentResponse } from "@google/genai";
 // Implement function in utils
-import { toQueryString } from "./utils";
+import { toQueryString } from "../utils/utils";
 
 dotenv.config();
 
