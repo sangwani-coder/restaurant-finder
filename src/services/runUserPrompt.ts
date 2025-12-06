@@ -139,26 +139,23 @@ export async function runUserPrompt(userPrompt: string): Promise<string | any> {
                   .
                     `
     // Send back function result to model for final result
-    if (response && 'candidates' in response) {
-      const finalPrompt = NewConstraint + userPrompt;
-      const newContents = [
-        {
-          role: 'user',
-          parts: [{ text: finalPrompt }]
-        },
-        {
-          role: 'model',
-          parts: [{ text: JSON.stringify(functionResponse) }],
-        },
-      ];
-      // Get the final response from the model
-      const final_response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: newContents,
-      });
-      return final_response.text;
-    }
+    const finalPrompt = NewConstraint + userPrompt;
+    const newContents = [
+      {
+        role: 'user',
+        parts: [{ text: finalPrompt }]
+      },
+      {
+        role: 'model',
+        parts: [{ text: JSON.stringify(functionResponse) }],
+      },
+    ];
 
+    const final_response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: newContents,
+    });
+    return final_response.text;
   } else {
     return response.text;
   }
