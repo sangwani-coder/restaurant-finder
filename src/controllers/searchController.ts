@@ -6,7 +6,11 @@ import { ParsedQs } from 'qs';
 export const checkStatus = (req: Request, res: Response, next: NextFunction) => {
   if (req.path === '/' || req.path === '') {
     // Handle /api only
-    return res.json({ status: 'API is running' });
+    return res.json({ 
+      status: 'API is running',
+      'endpoint': 'https://restaurant-finder-oaxi.onrender.com/api/execute?message=<your_message>&code=pioneerdevai'
+       }
+    );
   }
 
   // For all other /api/* routes, pass to next middleware

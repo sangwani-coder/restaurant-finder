@@ -1,4 +1,5 @@
 - [restaurant-finder](#restaurant-finder)
+  - [Live URL](#live-url)
   - [Project Structure](#project-structure)
   - [Running the project Locally](#running-the-project-locally)
     - [Setup Environment:](#setup-environment)
@@ -16,6 +17,11 @@
 # restaurant-finder
 LLM-Driven Restaurant Finder API that allows users to enter a free‑form message
 describing what they want to do. The API processes natural language queries and returns relevant restaurant information from the Foursquare Places API.
+
+## Live URL
+Test the live API server deployed at:
+
+    https://restaurant-finder-oaxi.onrender.com/
 
 ## Project Structure
 
