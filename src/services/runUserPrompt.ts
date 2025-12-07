@@ -17,7 +17,7 @@ export async function findOptimalRestaurants(query: any, userLocation:any) {
   // Implement function in Utils to encode query params
   const parsed_query = toQueryString(query);
   let url:string | null = null;
-  console.log(`Passed location ${userLocation}`);
+  console.log(`Passed location 2-> ${userLocation}`);
   if (userLocation){
     url = `https://places-api.foursquare.com/places/search${parsed_query}&ll=userLocation`;
   } else{
@@ -101,7 +101,7 @@ const restaurantFunctionDeclaration = {
  */
 export async function runUserPrompt(userPrompt: string, userLocation:any): Promise<string | any> {
   const systemPrompt = constraints + userPrompt;
-  console.log(`Passed location ${userLocation}`);
+  console.log(`Passed location-> ${userLocation}`);
   const contents = [
     {
       role: 'user',

@@ -53,7 +53,7 @@ export const findRestaurants = (req: Request, res: Response, next: NextFunction)
             const ipinfoWrapper = new IPinfoWrapper(config.IP_INFO_API_TOKEN);
             try {
               if (req.ip) {
-                const ipinfo: IPinfo = await ipinfoWrapper.lookupIp('102.212.183.26');
+                const ipinfo: IPinfo = await ipinfoWrapper.lookupIp(req.ip);
                 location = ipinfo.loc || null;
                 console.log('IPINFO', ipinfo);
               }
