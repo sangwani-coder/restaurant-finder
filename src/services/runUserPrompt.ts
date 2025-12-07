@@ -2,7 +2,6 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { initializeConfig } from '../config/config';
 import { GenerateContentResponse } from "@google/genai";
 import { toQueryString } from "../utils/utils";
-
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -14,10 +13,16 @@ const ai = new GoogleGenAI({ apiKey: config.GEMINI_API_KEY });
  * Find optimal restaurants for a user
  * @param string {query} - A string that provides query parameters.
  */
-export async function findOptimalRestaurants(query: any) {
+export async function findOptimalRestaurants(query: any, userLocation:any) {
   // Implement function in Utils to encode query params
   const parsed_query = toQueryString(query);
-  const url = `https://places-api.foursquare.com/places/search${parsed_query}`;
+  let url:string | null = null;
+  console.log(`Passed location ${userLocation}`);
+  if (userLocation){
+    url = `https://places-api.foursquare.com/places/search${parsed_query}&ll=userLocation`;
+  } else{
+    url = `https://places-api.foursquare.com/places/search${parsed_query}`;
+  }
   const options = {
     method: 'GET',
     headers: {
@@ -26,6 +31,7 @@ export async function findOptimalRestaurants(query: any) {
     },
   };
   try {
+    console.log('URL', url);
     const res = await fetch(url, options);
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
@@ -39,7 +45,7 @@ export async function findOptimalRestaurants(query: any) {
 }
 
 const constraints = `
-    Convert prompt into structured JSON command, Valid parameter fields are location, name,
+    Convert prompt into structured JSON command, Valid parameter fields are query, name,
     taste label, chain name, tip, telephone number.
 
     If the filter/parameter is not available proceed with available filters.
@@ -93,8 +99,9 @@ const restaurantFunctionDeclaration = {
  * @param (string) userPrompt - A string from message query paramter
  * @returns The filtered JSON object from Google Gen AI
  */
-export async function runUserPrompt(userPrompt: string): Promise<string | any> {
+export async function runUserPrompt(userPrompt: string, userLocation:any): Promise<string | any> {
   const systemPrompt = constraints + userPrompt;
+  console.log(`Passed location ${userLocation}`);
   const contents = [
     {
       role: 'user',
@@ -115,10 +122,10 @@ export async function runUserPrompt(userPrompt: string): Promise<string | any> {
 
   // Check for function calls in the response
   if (response.functionCalls && response.functionCalls.length > 0) {
-    const tool_call = response.functionCalls[0]; // Assuming one function call
+    const tool_call = response.functionCalls[0];
     let functionResponse;
     if (tool_call?.name === 'find_optimal_restaurants' && tool_call.args) {
-      functionResponse = await findOptimalRestaurants(tool_call.args);
+      functionResponse = await findOptimalRestaurants(tool_call.args, userLocation);
     }
     const NewConstraint = `Your task is to Use the function response from Foursquare Places API. 
                     and return new JSON objects with detailed restaurant information.
@@ -160,3 +167,8 @@ export async function runUserPrompt(userPrompt: string): Promise<string | any> {
     return response.text;
   }
 }
+
+
+// const prompt = `Find me all the restuarants near lusaka with africa in name or food`;
+// const res = runUserPrompt(prompt);
+// console.log('Test results', res);

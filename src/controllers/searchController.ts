@@ -2,18 +2,37 @@ import { Request, Response, NextFunction } from 'express';
 import { runUserPrompt } from '../services/runUserPrompt';
 import { parseGenAIResponse } from "../utils/utils";
 import { ParsedQs } from 'qs';
+import { IPinfoWrapper, IPinfo } from "node-ipinfo";
+import { initializeConfig } from '../config/config';
+import {getLocation } from '../services/getLocation';
+import dotenv from 'dotenv';
+dotenv.config();
 
-export const checkStatus = (req: Request, res: Response, next: NextFunction) => {
-  if (req.path === '/' || req.path === '') {
-    // Handle /api only
-    return res.json({ 
-      status: 'API is running',
-      'endpoint': 'https://restaurant-finder-oaxi.onrender.com/api/execute?message=<your_message>&code=pioneerdevai'
-       }
-    );
+// Configure the client
+const config = initializeConfig();
+
+export const checkStatus = async (req: Request, res: Response, next: NextFunction) => {
+   let location: string | null = null;
+  // Only handle the root `/api` path
+  if (req.path === "/" || req.path === "") {
+    const fetchLocation = async function(){
+      if (req.ip){
+            location = await getLocation(req.ip) || null;
+          };
+    };
+    fetchLocation();
+    
+    return res.json({
+      status: "API is running",
+      location: location || "Not found",
+      Endpoints: {
+        execute:
+          "https://restaurant-finder-oaxi.onrender.com/api/execute?message=<your_message>&code=pioneerdevai",
+      },
+    });
   }
 
-  // For all other /api/* routes, pass to next middleware
+  // Any other /api route continues
   next();
 };
 
@@ -27,11 +46,25 @@ export const findRestaurants = (req: Request, res: Response, next: NextFunction)
     // Access query paramters
     const query: Query = req.query as Query;
     const message = query.message;
+    let location: string | null = null;
     if (query.code == "pioneerdevai") {
       if (typeof message === 'string') {
+        const fetchLocation = async function(){
+            const ipinfoWrapper = new IPinfoWrapper(config.IP_INFO_API_TOKEN);
+            try {
+              if (req.ip) {
+                const ipinfo: IPinfo = await ipinfoWrapper.lookupIp('102.212.183.26');
+                location = ipinfo.loc || null;
+                console.log('IPINFO', ipinfo);
+              }
+            } catch (error) {
+              console.error("Error looking up IP:", error);
+            }
+        }
+        fetchLocation();
         const decodedParam = decodeURIComponent(message);
         const fetchRes = async function () {
-          const searchResults = await runUserPrompt(decodedParam);
+          const searchResults = await runUserPrompt(decodedParam, location);
           const jsonResults = parseGenAIResponse(searchResults);
           if (jsonResults != null) {
             res.status(200).json(jsonResults);

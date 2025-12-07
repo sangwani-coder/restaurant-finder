@@ -3,6 +3,7 @@ interface Config {
   nodeEnv: string;
   GEMINI_API_KEY: string;
   FSQ_API_KEY: string;
+  IP_INFO_API_TOKEN: string
 }
 
 export const initializeConfig = (): Config => {
@@ -12,6 +13,7 @@ export const initializeConfig = (): Config => {
     nodeEnv: process.env.NODE_ENV || 'development',
     GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
     FSQ_API_KEY: process.env.FSQ_API_KEY || '',
+    IP_INFO_API_TOKEN: process.env.IP_INFO_API_TOKEN || '',
   };
   return config;
 };
