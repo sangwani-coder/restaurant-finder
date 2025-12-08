@@ -11,7 +11,7 @@ const config = initializeConfig();
  * @params (string) ip - A users IP address obtained from the GET request.
  * @returns: lat long e.g(1.8781,-87.6298)
  * */
-export async function getLocation(ip:any){
+export async function getLocation(ip:string | null){
     const ipinfoWrapper = new IPinfoWrapper(config.IP_INFO_API_TOKEN);
     // Only handle the root `/api` path
     let location: string | null = null;

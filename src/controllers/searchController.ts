@@ -4,41 +4,66 @@ import { parseGenAIResponse } from "../utils/utils";
 import { ParsedQs } from 'qs';
 import { IPinfoWrapper, IPinfo } from "node-ipinfo";
 import { initializeConfig } from '../config/config';
-import {getLocation } from '../services/getLocation';
-import {getClientIp} from 'get-client-ip';
+import { getLocation } from '../services/getLocation';
 import dotenv from 'dotenv';
 dotenv.config();
 
 // Configure the client
 const config = initializeConfig();
 
-export const checkStatus = async (req: Request, res: Response, next: NextFunction) => {
-   let location: string | null = null;
-   const ip = getClientIp(req);
-   console.log('IP result', ip);
-  // Only handle the root `/api` path
-  if (req.path === "/" || req.path === "") {
-    const fetchLocation = async function(){
-      if (req){
-            location = await getLocation(ip) || null;
-          };
-    };
-    fetchLocation();
-    
-    return res.json({
-      status: "API is running",
-      ip : ip,
-      location: location || "Not found",
-      Endpoints: {
-        execute:
-          "https://restaurant-finder-oaxi.onrender.com/api/execute?message=<your_message>&code=pioneerdevai",
-      },
-    });
-  }
 
-  // Any other /api route continues
-  next();
-};
+export const checkStatus = async (req: Request, res: Response, next: NextFunction) => {
+  let location: string | null = null;
+  const xForwardFor = req.headers['x-forwarded-for'];
+  let userIp: string | null = null;
+  console.log('Header', xForwardFor);
+  // Using optional chaining and nullish coalescing
+  if (req.path === "/" || req.path === "") {
+
+    if (xForwardFor) {
+      if (typeof xForwardFor === 'string') {
+        userIp = xForwardFor.split(',')[0]?.trim() ?? null;
+        console.log('Header user Ip', userIp);
+      } else if (Array.isArray(xForwardFor)) {
+        userIp = xForwardFor[0]?.trim() ?? null;
+      }
+    } else {
+      if (req.ip) {
+        userIp = req.ip;
+      }
+    }
+    if (userIp) {
+      const ipinfoWrapper = new IPinfoWrapper(config.IP_INFO_API_TOKEN);
+      // Only handle the root `/api` path
+      let location: string | null = null;
+      let country: string | null = null;
+
+      try {
+        if (userIp) {
+          const ipinfo: IPinfo = await ipinfoWrapper.lookupIp(userIp);
+          location = ipinfo.loc || null;
+        }
+      } catch (error) {
+        console.error("Error looking up IP:", error);
+      }
+    }
+    // Only handle the root `/api` path
+    if (req.path === "/" || req.path === "") {
+      return res.json({
+        status: "API is running",
+        ip: userIp,
+        location: location || "Not found",
+        Endpoints: {
+          execute:
+            "https://restaurant-finder-oaxi.onrender.com/api/execute?message=<your_message>&code=pioneerdevai",
+        },
+      });
+    }
+
+    // Any other /api route continues
+    next();
+  };
+}
 
 interface Query extends ParsedQs {
   message?: string;
@@ -54,18 +79,19 @@ export const findRestaurants = (req: Request, res: Response, next: NextFunction)
     if (query.code == "pioneerdevai") {
       if (typeof message === 'string') {
         console.log('Request data->', req);
-        const fetchLocation = async function(){
-            const ipinfoWrapper = new IPinfoWrapper(config.IP_INFO_API_TOKEN);
-            try {
-              if (req) {
-                const forwadedIP:string = getClientIp(req) || '';
-                const ipinfo: IPinfo = await ipinfoWrapper.lookupIp(forwadedIP);
-                location = ipinfo.loc || null;
-                console.log('IPINFO', ipinfo);
-              }
-            } catch (error) {
-              console.error("Error looking up IP:", error);
+        const fetchLocation = async function () {
+          const ipinfoWrapper = new IPinfoWrapper(config.IP_INFO_API_TOKEN);
+          try {
+            if (req) {
+              // const userIp = req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0].trim() : null;
+              const userIp = '';
+              const ipinfo: IPinfo = await ipinfoWrapper.lookupIp(userIp);
+              location = ipinfo.loc || null;
+              console.log('IPINFO', ipinfo);
             }
+          } catch (error) {
+            console.error("Error looking up IP:", error);
+          }
         }
         fetchLocation();
         const decodedParam = decodeURIComponent(message);
@@ -74,7 +100,7 @@ export const findRestaurants = (req: Request, res: Response, next: NextFunction)
           const jsonResults = parseGenAIResponse(searchResults);
           if (jsonResults != null) {
             res.status(200).json(jsonResults);
-          }else {
+          } else {
             const emptyJson = ` { "action": "restaurant_search", "results": [] }`
             res.status(200).json(JSON.parse(emptyJson));
           }
