@@ -17,6 +17,7 @@
     "@google/genai": "^1.30.0",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "get-client-ip": "^3.0.4",
     "googleapis": "^167.0.0",
     "morgan": "^1.10.1",
     "node-ipinfo": "^4.2.0",

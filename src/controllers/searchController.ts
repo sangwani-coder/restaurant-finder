@@ -5,6 +5,7 @@ import { ParsedQs } from 'qs';
 import { IPinfoWrapper, IPinfo } from "node-ipinfo";
 import { initializeConfig } from '../config/config';
 import {getLocation } from '../services/getLocation';
+import {getClientIp} from 'get-client-ip';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -13,17 +14,20 @@ const config = initializeConfig();
 
 export const checkStatus = async (req: Request, res: Response, next: NextFunction) => {
    let location: string | null = null;
+   const ip = getClientIp(req);
+   console.log('IP result', ip);
   // Only handle the root `/api` path
   if (req.path === "/" || req.path === "") {
     const fetchLocation = async function(){
-      if (req.ip){
-            location = await getLocation(req.ip) || null;
+      if (req){
+            location = await getLocation(ip) || null;
           };
     };
     fetchLocation();
     
     return res.json({
       status: "API is running",
+      ip : ip,
       location: location || "Not found",
       Endpoints: {
         execute:
@@ -53,8 +57,9 @@ export const findRestaurants = (req: Request, res: Response, next: NextFunction)
         const fetchLocation = async function(){
             const ipinfoWrapper = new IPinfoWrapper(config.IP_INFO_API_TOKEN);
             try {
-              if (req.ip) {
-                const ipinfo: IPinfo = await ipinfoWrapper.lookupIp(req.ip);
+              if (req) {
+                const forwadedIP:string = getClientIp(req) || '';
+                const ipinfo: IPinfo = await ipinfoWrapper.lookupIp(forwadedIP);
                 location = ipinfo.loc || null;
                 console.log('IPINFO', ipinfo);
               }
