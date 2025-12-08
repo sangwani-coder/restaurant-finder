@@ -34,14 +34,12 @@ export const checkStatus = async (req: Request, res: Response, next: NextFunctio
     }
     if (userIp) {
       const ipinfoWrapper = new IPinfoWrapper(config.IP_INFO_API_TOKEN);
-      // Only handle the root `/api` path
-      let location: string | null = null;
-      let country: string | null = null;
-
       try {
         if (userIp) {
           const ipinfo: IPinfo = await ipinfoWrapper.lookupIp(userIp);
-          location = ipinfo.loc || null;
+          location = ipinfo.loc;
+          console.log('Location', location);
+          console.log('IPINFO', ipinfo);
         }
       } catch (error) {
         console.error("Error looking up IP:", error);
