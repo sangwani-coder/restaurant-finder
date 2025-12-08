@@ -3,12 +3,14 @@ interface Config {
   nodeEnv: string;
   GEMINI_API_KEY: string;
   FSQ_API_KEY: string;
-  IP_INFO_API_TOKEN: string
+  IP_INFO_API_TOKEN: string;
+  SERVER_ENV: string
 }
 
 export const initializeConfig = (): Config => {
   // Access process.env here when the function is called
   const config: Config = {
+    SERVER_ENV: process.env.SERVER_ENV || "localhost",
     port: Number(process.env.PORT) || 3000,
     nodeEnv: process.env.NODE_ENV || 'development',
     GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
