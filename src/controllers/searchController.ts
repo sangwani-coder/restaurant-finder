@@ -64,7 +64,7 @@ export const findRestaurants = (req: Request, res: Response, next: NextFunction)
         fetchLocation();
         const decodedParam = decodeURIComponent(message);
         const fetchRes = async function () {
-          const searchResults = await runUserPrompt(decodedParam, location);
+          const searchResults = await runUserPrompt(decodedParam, req.ip);
           const jsonResults = parseGenAIResponse(searchResults);
           if (jsonResults != null) {
             res.status(200).json(jsonResults);
