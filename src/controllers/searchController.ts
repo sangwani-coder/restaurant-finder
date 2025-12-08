@@ -49,6 +49,7 @@ export const findRestaurants = (req: Request, res: Response, next: NextFunction)
     let location: string | null = null;
     if (query.code == "pioneerdevai") {
       if (typeof message === 'string') {
+        console.log('Request data->', req);
         const fetchLocation = async function(){
             const ipinfoWrapper = new IPinfoWrapper(config.IP_INFO_API_TOKEN);
             try {
